@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -eu
+
+file=$1
+
+fname=$(basename "$file")
+docker exec -i prjdata /root/video_create.sh "${fname}" "/data/project/camera/${fname}" < "${file}"
+

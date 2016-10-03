@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -eu
+
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ "$#" -ge 2 ] || die 'vm_id is required'
+
+vm_id="$1"
+shift
+
+docker exec -ti "${vm_id}_adb" adb "$@"

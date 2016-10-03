@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -eu
+
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ -z "${AIC_HOME:=}" ] && die "AIC_HOME is not set"
+
+
+ls -1 "${AIC_HOME}/lib/vms"
+

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -eu
+
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ -z "${AIC_HOME:=}" ] && die "AIC_HOME is not set"
+
+docker-compose -f "${AIC_HOME}/lib/docker/run-project.yml" up --no-build -d
+

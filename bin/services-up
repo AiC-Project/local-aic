@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -eu
+
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ -z "${AIC_HOME:=}" ] && die "AIC_HOME is not set"
+
+docker-compose -f "${AIC_HOME}/lib/docker/services/services.yml" -p services up --no-build -d
+
+sleep 3
+
+bash "${AIC_HOME}/bin/rabbitmq-create-exchanges"
+

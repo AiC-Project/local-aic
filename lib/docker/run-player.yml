@@ -1,0 +1,115 @@
+version: "2"
+
+services:
+  xorg:
+    container_name: "${AIC_AVM_PREFIX}xorg"
+    image: aic.xorg
+    ports:
+      - 5900
+    environment:
+      - AIC_PLAYER_VNC_SECRET
+  ffserver:
+    container_name: "${AIC_AVM_PREFIX}ffserver"
+    image: aic.ffserver
+    ports:
+      - 8090
+  adb:
+    container_name: "${AIC_AVM_PREFIX}adb"
+    image: aic.adb
+    volumes_from:
+      - container:${AIC_PROJECT_PREFIX}prjdata:ro
+    environment:
+      - AIC_PLAYER_VM_HOST
+  sdl:
+    container_name: "${AIC_AVM_PREFIX}sdl"
+    image: aic.sdl
+    volumes_from:
+      - avmdata
+    # command: tail -f /dev/null
+    environment:
+      - AIC_PLAYER_AMQP_HOST
+      - AIC_PLAYER_AMQP_USERNAME
+      - AIC_PLAYER_AMQP_PASSWORD
+      - AIC_PLAYER_VM_ID
+      - AIC_PLAYER_VM_HOST
+      - AIC_PLAYER_WIDTH
+      - AIC_PLAYER_HEIGHT
+      - AIC_PLAYER_ENABLE_RECORD
+      - AIC_PLAYER_ANDROID_VERSION
+      - AIC_PLAYER_PATH_RECORD
+    # to be able to strace
+    privileged: false
+    depends_on:
+      - xorg
+    networks:
+      - default
+      - services_default
+    external_links:
+      - rabbitmq:rabbitmq
+  audio:
+    # command: tail -f /dev/null
+    container_name: "${AIC_AVM_PREFIX}audio"
+    image: aic.audio
+    environment:
+      - AIC_PLAYER_VM_HOST
+    depends_on:
+      - ffserver
+    networks:
+      - default
+      - services_default
+    external_links:
+      - rabbitmq:rabbitmq
+  sensors:
+    # command: tail -f /dev/null
+    container_name: "${AIC_AVM_PREFIX}sensors"
+    image: aic.sensors
+    environment:
+      - AIC_PLAYER_AMQP_HOST
+      - AIC_PLAYER_AMQP_USERNAME
+      - AIC_PLAYER_AMQP_PASSWORD
+      - AIC_PLAYER_VM_HOST
+      - AIC_PLAYER_VM_ID
+      - AIC_PLAYER_ENABLE_SENSORS
+      - AIC_PLAYER_ENABLE_BATTERY
+      - AIC_PLAYER_ENABLE_GPS
+      - AIC_PLAYER_ENABLE_GSM
+      - AIC_PLAYER_ENABLE_NFC
+    networks:
+      - default
+      - services_default
+    external_links:
+      - rabbitmq:rabbitmq
+  camera:
+    # command: tail -f /dev/null
+    container_name: "${AIC_AVM_PREFIX}camera"
+    image: aic.camera
+    environment:
+      - AIC_PLAYER_AMQP_HOST
+      - AIC_PLAYER_AMQP_USERNAME
+      - AIC_PLAYER_AMQP_PASSWORD
+      - AIC_PLAYER_VM_HOST
+      - AIC_PLAYER_VM_ID
+    volumes_from:
+      - container:${AIC_PROJECT_PREFIX}prjdata:ro
+    networks:
+      - default
+      - services_default
+    external_links:
+      - rabbitmq:rabbitmq
+  avmdata:
+    container_name: "${AIC_AVM_PREFIX}avmdata"
+    image: aic.avmdata
+    volumes:
+      - /data/avm
+    networks: []
+
+networks:
+  services_default:
+    external: true
+  default:
+
+#networks:
+#  default:
+#    driver_opts:
+#      com.docker.network.driver.mtu: 1400
+

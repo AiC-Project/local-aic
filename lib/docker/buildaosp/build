@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+PRODUCT="$1"
+
+cd rom
+
+export USE_CCACHE=1
+
+./prebuilts/misc/linux-x86/ccache/ccache -M 50G
+
+if grep "PLATFORM_VERSION := 4" build/core/version_defaults.mk; then
+    export JAVA_HOME=/usr/lib/jvm/java-6-oracle
+    # Kitkat needs make 3.82
+    mkdir -p ~/bin
+    ln -s /usr/local/bin/make-3.82 ~/bin/make
+    export PATH=~/bin/:$PATH
+else
+    export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+fi
+
+export PATH=$JAVA_HOME/bin/:$PATH
+
+source build/envsetup.sh
+
+lunch "${PRODUCT}-eng"
+
+set -eu
+
+TOP=$(pwd)
+export TOP
+mmma external/protobuf
+mmma external/aic/libaicd
+make android_disk_vdi -j 4
+
+BUILD_PROP="out/target/product/${PRODUCT}/system/build.prop"
+
+BUILD_ID=$(grep ^ro.build.id "$BUILD_PROP" | cut -d= -f2 | cut -d. -f1)
+BUILD_TIMESTAMP=$(grep ^ro.build.date.utc "$BUILD_PROP" | cut -d= -f2 | cut -d. -f1)
+ANDROID_RELEASE=$(grep ^ro.build.version.release "$BUILD_PROP" | cut -d= -f2)
+ANDROID_RELEASE_MAJOR=$(echo "$ANDROID_RELEASE" | cut -d. -f1)
+
+# store android version separately for bash parsing / local usage
+
+echo  "$ANDROID_RELEASE" > "out/target/product/${PRODUCT}/ANDROID_RELEASE"
+
+# store full metadata for cloud upload
+
+cat > "out/target/product/${PRODUCT}/android_system_disk.metadata" <<EOT
+{
+    "product": "$PRODUCT",
+    "build_id": "$BUILD_ID",
+    "build_timestamp": "$BUILD_TIMESTAMP",
+    "android_version": "$ANDROID_RELEASE_MAJOR"
+}
+EOT
+

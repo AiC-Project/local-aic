@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -eu
+
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ -z "${AIC_HOME:=}" ] && die "AIC_HOME is not set"
+
+[ "$#" -eq 1 ] || die 'vm_id is required'
+
+vm_id="$1"
+vm_dir="${AIC_HOME}/lib/vms/${vm_id}"
+
+tput setaf 3
+echo "Removing existing VM: ${vm_id}"
+tput setaf 6
+
+tput setaf 1
+export AIC_AVM_PREFIX="${vm_id}_"
+docker exec -ti senza teardown_rabbitmq "$vm_id"
+docker-compose -f "${AIC_HOME}/lib/docker/run-player.yml" -p "$vm_id" down || true
+virsh destroy "$vm_id" || true
+virsh undefine "$vm_id" || true
+rm -rf "$vm_dir"
+
+echo "Virtual machine destroyed."
+tput sgr0
+

@@ -1,0 +1,21 @@
+version: "2"
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.6-management
+#    ports:
+#      - "127.0.0.1:5672:5672"
+#      - "127.0.0.1:15672:15672"
+  senza:
+    container_name: senza
+    image: aic.senza
+    environment:
+      - SENZA_LOG_JSONFORMAT=False
+      - SENZA_AMQP_HOSTNAME=rabbitmq
+      - SENZA_AMQP_USERNAME=guest
+      - SENZA_AMQP_PASSWORD=guest
+      - SENZA_CAMERA_VIDEO_PATH=/data/project/camera/
+    depends_on:
+      - rabbitmq
+

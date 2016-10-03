@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -eu
+
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ -z "${AIC_HOME:=}" ] && die "AIC_HOME is not set"
+
+echo "Creating exchanges.."
+for vm_dir in ${AIC_HOME}/lib/vms/*; do
+    vm_id=$(basename "${vm_dir}")
+    echo "VM ${vm_id}"
+    docker exec -ti senza /app/ats.senza/scripts/setup_rabbitmq "$vm_id"
+done
+

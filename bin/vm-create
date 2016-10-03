@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+
+# This script creates a directory for vm instances and config files
+# in ./vms/ with a randomly generated VM name.
+# After copying files, it will define a new libvirt domain for the AiC VM,
+# start it, then retrieve the local IP and start the opengl renderer &
+# sensors in a set of docker containers.
+
+set -eu
+
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ -z "${AIC_HOME:=}" ] && die "AIC_HOME is not set"
+
+[ "$#" -eq 1 ] || die 'Android image path is required'
+
+
+
+assert_container_running () {
+    [ "$#" -eq 1 ] || die 'Container name is required'
+    if [[ "$(docker inspect --format='{{.State.Status}}' "$1")" != 'running' ]]; then
+        die "Container $1 is not running"
+    fi
+}
+
+
+assert_container_running senza
+assert_container_running rabbitmq
+assert_container_running prjdata
+
+
+vm_image_path="$1"
+
+vm_id=$(tr < /dev/urandom -dc a-z0-9 | head -c8)
+
+tput setaf 3
+echo "Creating new VM $vm_id"
+tput setaf 6
+
+# XXX exit if services / senza not available
+
+################# Create dirs and copy files ##########################
+
+mkdir -p "${AIC_HOME}/lib/vms"
+
+ANDROID_VERSION=$(cat "$vm_image_path/ANDROID_VERSION")
+SYSTEM_DISK=$(realpath "$vm_image_path/android_system_disk.vdi")
+DATA_DISK=$(realpath "$vm_image_path/android_data_disk.vdi")
+SDCARD=$(realpath "${AIC_HOME}/lib/sdcard.qcow2")
+
+echo "Copying vm images..."
+
+vm_dir="${AIC_HOME}/lib/vms/$vm_id"
+mkdir -p "$vm_dir" -m 711
+
+SYSTEM_VM_DISK=$(realpath "$vm_dir/android_system_disk.vdi")
+DATA_VM_DISK=$(realpath "$vm_dir/android_data_disk.vdi")
+SDCARD_VM=$(realpath "$vm_dir/sdcard.qcow2")
+
+cp "$SYSTEM_DISK" "$SYSTEM_VM_DISK"
+cp "$DATA_DISK" "$DATA_VM_DISK"
+cp "$SDCARD" "$SDCARD_VM"
+
+echo "VM images copied to vm directory."
+
+################### Setup AMQP queues ##################################
+
+docker exec -ti senza setup_rabbitmq "$vm_id"
+
+################### Fill XML template ##################################
+
+tmp_file=$(mktemp -p "$vm_dir" --suffix .xml)
+cp lib/vm_template.xml "$tmp_file"
+
+# fill dynamic fields
+sed -i "s#REPLACEME_NAME#$vm_id#g" "$tmp_file"
+sed -i "s#REPLACEME_SYSTEM_IMG#$SYSTEM_VM_DISK#g" "$tmp_file"
+sed -i "s#REPLACEME_DATA_IMG#$DATA_VM_DISK#g" "$tmp_file"
+sed -i "s#REPLACEME_SDCARD#$SDCARD_VM#g" "$tmp_file"
+
+################### Create and run the VM ##############################
+
+virsh define "$tmp_file"
+# get the generated mac address to query the assigned IP later
+mac_addrs=$(virsh dumpxml "$vm_id" | grep 'mac address' | cut -d\' -f2)
+lines=
+readarray -t lines < <(echo "$mac_addrs")
+mac_addr_1="${lines[0]}"
+
+virsh start "$vm_id"
+tput setaf 3
+echo "Virtual machine $vm_id started"
+tput setaf 6
+
+# Wait for the VM to get an IP
+vmip=""
+while [[ -z "$vmip" ]]; do
+    echo "Waiting 5 seconds for an IP address"
+    sleep 5
+    vmip=$(arp -e -i virbr0 | grep "$mac_addr_1" | awk '{printf $1}')
+done
+
+echo "Virtual machine IP: $vmip"
+echo "$vmip" >"$vm_dir/ip"
+
+############################ Run the player ############################
+
+export AIC_PLAYER_VM_HOST="${vmip}"
+export AIC_PLAYER_ANDROID_VERSION="${ANDROID_VERSION}"
+export AIC_AVM_PREFIX="${vm_id}_"
+export AIC_PLAYER_VM_ID="${vm_id}"
+
+export AIC_PLAYER_AMQP_HOST="${AIC_PLAYER_AMQP_HOST-rabbitmq}"
+export AIC_PLAYER_AMQP_USERNAME="${AIC_PLAYER_AMQP_USERNAME-guest}"
+export AIC_PLAYER_AMQP_PASSWORD="${AIC_PLAYER_AMQP_PASSWORD-guest}"
+export AIC_PLAYER_VNC_SECRET="${AIC_PLAYER_VNC_SECRET-}"
+
+export AIC_PLAYER_WIDTH="${AIC_PLAYER_WIDTH-800}"
+export AIC_PLAYER_HEIGHT="${AIC_PLAYER_HEIGHT-600}"
+export AIC_PLAYER_MAX_DIMENSION="${AIC_PLAYER_MAX_DIMENSION-4096}"
+
+export AIC_PLAYER_ENABLE_SENSORS="${AIC_PLAYER_ENABLE_SENSORS-y}"
+export AIC_PLAYER_ENABLE_BATTERY="${AIC_PLAYER_ENABLE_BATTERY-y}"
+export AIC_PLAYER_ENABLE_GPS="${AIC_PLAYER_ENABLE_GPS-y}"
+export AIC_PLAYER_ENABLE_GSM="${AIC_PLAYER_ENABLE_GSM-y}"
+export AIC_PLAYER_ENABLE_NFC="${AIC_PLAYER_ENABLE_NFC-n}"
+export AIC_PLAYER_ENABLE_RECORD="${AIC_PLAYER_ENABLE_RECORD-n}"
+export AIC_PLAYER_PATH_RECORD="${AIC_PLAYER_PATH_RECORD-/data/avm/log/}"
+
+docker-compose -f "${AIC_HOME}/lib/docker/run-player.yml" -p "$vm_id" up -d
+
+################### Everything is started ##############################
+
+tput setaf 3
+echo >&2 VM created
+echo "VM ID: $vm_id"
+tput sgr0

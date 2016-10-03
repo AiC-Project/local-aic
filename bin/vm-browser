@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -eu
+
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ "$#" -eq 1 ] || die 'vm_id is required'
+
+vm_id="$1"
+
+NOVNC_PORT=$(docker inspect --format='{{(index (index .NetworkSettings.Ports "5900/tcp") 0).HostPort}}' "${vm_id}_xorg")
+
+URL="http://kanaka.github.io/noVNC/noVNC/vnc_auto.html?host=localhost&port=$NOVNC_PORT"
+
+echo "Opening $URL"
+sensible-browser "$URL"
+

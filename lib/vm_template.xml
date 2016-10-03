@@ -1,0 +1,121 @@
+<domain type='kvm' id='2'>
+  <name>REPLACEME_NAME</name>
+  <memory unit='KiB'>1048576</memory>
+  <currentMemory unit='KiB'>1048576</currentMemory>
+  <vcpu placement='static'>2</vcpu>
+  <resource>
+    <partition>/machine</partition>
+  </resource>
+  <os>
+    <type arch='x86_64' machine='pc-i440fx-trusty'>hvm</type>
+    <boot dev='hd'/>
+    <bootmenu enable='no'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <pae/>
+  </features>
+  <clock offset='utc'/>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>restart</on_crash>
+  <devices>
+    <emulator>/usr/bin/kvm-spice</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='vdi'/>
+      <source file='REPLACEME_SYSTEM_IMG'/>
+      <target dev='vda' bus='virtio'/>
+      <alias name='virtio-disk0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='vdi'/>
+      <source file='REPLACEME_DATA_IMG'/>
+      <target dev='vdb' bus='virtio'/>
+      <alias name='virtio-disk1'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x08' function='0x0'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='REPLACEME_SDCARD'/>
+      <target dev='vdc' bus='virtio'/>
+      <alias name='virtio-disk2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0b' function='0x0'/>
+    </disk>
+    <controller type='usb' index='0'>
+      <alias name='usb0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x2'/>
+    </controller>
+    <controller type='pci' index='0' model='pci-root'>
+      <alias name='pci.0'/>
+    </controller>
+    <controller type='ide' index='0'>
+      <alias name='ide0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
+    </controller>
+    <controller type='virtio-serial' index='0'>
+      <alias name='virtio-serial0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
+    </controller>
+    <interface type='network'>
+      <source network='default'/>
+      <target dev='vnet0'/>
+      <model type='rtl8139'/>
+      <alias name='net0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
+    </interface>
+    <interface type='network'>
+      <source network='default'/>
+      <target dev='vnet1'/>
+      <model type='rtl8139'/>
+      <alias name='net1'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
+    </interface>
+    <interface type='network'>
+      <mac address='52:54:00:e9:24:89'/>
+      <source network='default'/>
+      <target dev='vnet2'/>
+      <model type='rtl8139'/>
+      <alias name='net2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x0'/>
+    </interface>
+    <serial type='pty'>
+      <source path='/dev/pts/23'/>
+      <target port='0'/>
+      <alias name='serial0'/>
+    </serial>
+    <console type='pty' tty='/dev/pts/23'>
+      <source path='/dev/pts/23'/>
+      <target type='serial' port='0'/>
+      <alias name='serial0'/>
+    </console>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <graphics type='vnc' port='5901' autoport='yes' listen='127.0.0.1'>
+      <listen type='address' address='127.0.0.1'/>
+    </graphics>
+    <sound model='ac97'>
+      <alias name='sound0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0a' function='0x0'/>
+    </sound>
+    <video>
+      <model type='qxl' ram='65536' vram='65536' heads='1'/>
+      <alias name='video0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
+    </video>
+    <watchdog model='i6300esb' action='none'>
+      <alias name='watchdog0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x09' function='0x0'/>
+    </watchdog>
+    <memballoon model='virtio'>
+      <alias name='balloon0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
+    </memballoon>
+  </devices>
+  <seclabel type='dynamic' model='apparmor' relabel='yes'>
+    <label>libvirt-df273627-0e71-8c37-0bf2-5a6edab7b08c</label>
+    <imagelabel>libvirt-df273627-0e71-8c37-0bf2-5a6edab7b08c</imagelabel>
+  </seclabel>
+</domain>
+

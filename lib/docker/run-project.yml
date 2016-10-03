@@ -1,0 +1,9 @@
+version: "2"
+
+services:
+  prjdata:
+    container_name: "${AIC_PROJECT_PREFIX}prjdata"
+    image: aic.prjdata
+    volumes:
+      - /data/project
+    networks: []
