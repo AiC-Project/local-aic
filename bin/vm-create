@@ -46,7 +46,7 @@ tput setaf 6
 
 mkdir -p "${AIC_HOME}/lib/vms"
 
-ANDROID_VERSION=$(cat "$vm_image_path/ANDROID_VERSION")
+ANDROID_VERSION=$(cat "$vm_image_path/ANDROID_RELEASE" | cut -d. -f1)
 SYSTEM_DISK=$(realpath "$vm_image_path/android_system_disk.vdi")
 DATA_DISK=$(realpath "$vm_image_path/android_data_disk.vdi")
 SDCARD=$(realpath "${AIC_HOME}/lib/sdcard.qcow2")
