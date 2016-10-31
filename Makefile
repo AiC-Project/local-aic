@@ -75,7 +75,7 @@ lib/images:
 
 docker-save: services-build player-build | lib/images
 	docker save -o lib/images/services.tar aic.senza
-	docker save -o lib/images/player.tar aic.ffserver aic.xorg aic.prjdata aic.avmdata aic.sdl aic.camera aic.audio aic.sensors
+	docker save -o lib/images/player.tar aic.ffserver aic.xorg aic.prjdata aic.avmdata aic.sdl aic.camera aic.audio aic.sensors aic.adb
 
 
 #

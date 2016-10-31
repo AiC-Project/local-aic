@@ -13,6 +13,7 @@ echo "Creating exchanges.."
 for vm_dir in ${AIC_HOME}/lib/vms/*; do
     vm_id=$(basename "${vm_dir}")
     echo "VM ${vm_id}"
+    sleep 5
     docker exec -ti senza /app/ats.senza/scripts/setup_rabbitmq "$vm_id"
 done
 

@@ -20,7 +20,7 @@ tput setaf 6
 
 tput setaf 1
 export AIC_AVM_PREFIX="${vm_id}_"
-docker exec -ti senza teardown_rabbitmq "$vm_id"
+docker exec -ti senza /app/ats.senza/scripts/teardown_rabbitmq "$vm_id"
 docker-compose -f "${AIC_HOME}/lib/docker/run-player.yml" -p "$vm_id" down || true
 virsh destroy "$vm_id" || true
 virsh undefine "$vm_id" || true

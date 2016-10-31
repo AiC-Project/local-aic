@@ -68,7 +68,7 @@ echo "VM images copied to vm directory."
 
 ################### Setup AMQP queues ##################################
 
-docker exec -ti senza setup_rabbitmq "$vm_id"
+docker exec -ti senza /app/ats.senza/scripts/setup_rabbitmq "$vm_id"
 
 ################### Fill XML template ##################################
 
