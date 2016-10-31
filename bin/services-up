@@ -11,7 +11,7 @@ die () {
 
 docker-compose -f "${AIC_HOME}/lib/docker/services/services.yml" -p services up --no-build -d
 
-sleep 3
+sleep 6
 
 bash "${AIC_HOME}/bin/rabbitmq-create-exchanges"
 
