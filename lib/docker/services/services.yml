@@ -3,12 +3,14 @@ version: "2"
 services:
   rabbitmq:
     container_name: rabbitmq
+    restart: unless-stopped
     image: rabbitmq:3.6-management
 #    ports:
 #      - "127.0.0.1:5672:5672"
 #      - "127.0.0.1:15672:15672"
   senza:
     container_name: senza
+    restart: unless-stopped
     image: aic.senza
     environment:
       - SENZA_LOG_JSONFORMAT=False

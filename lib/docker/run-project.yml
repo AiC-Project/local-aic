@@ -3,6 +3,7 @@ version: "2"
 services:
   prjdata:
     container_name: "${AIC_PROJECT_PREFIX}prjdata"
+    restart: unless-stopped
     image: aic.prjdata
     volumes:
       - /data/project
