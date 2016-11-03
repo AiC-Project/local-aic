@@ -90,8 +90,8 @@ $ cd $AIC_HOME
 
 ```
 $ mkdir -p lib/images
-$ curl -o lib/images/services.tar https://github.com/AiC-Project/local-aic/releases/download/0.7.3/services.tar
-$ curl -o lib/images/player.tar https://github.com/AiC-Project/local-aic/releases/download/0.7.3/player.tar
+$ curl -Lo lib/images/services.tar https://github.com/AiC-Project/local-aic/releases/download/0.7.3/services.tar
+$ curl -Lo lib/images/player.tar https://github.com/AiC-Project/local-aic/releases/download/0.7.3/player.tar
 $ make docker-load
 docker load -i lib/images/services.tar
 Loaded image: aic.senza:latest
@@ -129,7 +129,7 @@ $
 ### From binaries
 
 ```
-$ curl https://github.com/AiC-Project/local-aic/releases/download/0.7.3/android-images.tar | xf -C lib/images/
+$ curl -L https://github.com/AiC-Project/local-aic/releases/download/0.7.3/android-images.tar | xf -C lib/images/
 ```
 
 ### From sources
