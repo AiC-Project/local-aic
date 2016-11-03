@@ -129,7 +129,7 @@ $
 ### From binaries
 
 ```
-$ curl -L https://github.com/AiC-Project/local-aic/releases/download/0.7.3/android-images.tar | xf -C lib/images/
+$ curl -L https://github.com/AiC-Project/local-aic/releases/download/0.7.3/android-images.tar | tar xf - -C lib/images/
 ```
 
 ### From sources
