@@ -180,14 +180,14 @@ You need to bring them up, as docker containers, and that's all. Note that rabbi
 is running with the default password (guest/guest).
 
 ```
-~/local-aic $ ./bin/services-up
+$ ./bin/services-up
 Creating network "services_default" with the default driver
 Creating rabbitmq
 Creating senza
-~/local-aic $ ./bin/project-up
+$ ./bin/project-up
 WARNING: The AIC_PROJECT_PREFIX variable is not set. Defaulting to a blank string.
 Creating prjdata
-~/local-aic $
+$
 ```
 
 
