@@ -264,7 +264,8 @@ The fb-adb script will forward any parameter to an "adb" process running in a de
 $ ./bin/vm-adb kpbmvzpw shell getprop wifi.interface
 eth1
 ```
-
+## Transfering files
+-- Through adb
 If you need to transfer files with push/pull/install, the adb process will not have access to the host
 filesystem, so it might be better to install the package android-tools-adb with apt.
 The IP address of each VM is in ./libs/vms/{vm_id}/ip
@@ -275,7 +276,16 @@ connected to 192.168.122.214:5555
 $ adb -s $(cat lib/vms/kpbmvzpw/ip):5555 pull /init
 3776 KB/s (413355 bytes in 0.106s)
 ```
-
+-- Installing an apk through Docker and vm-adb
+If for some reason you have troubles using the regular adb commands, you can use docker to transfer files to the VM, through the aic.adb container.
+```
+$ docker cp path/to/file.apk kpbmvzpw_adb:/tmp/
+$
+```
+Then you can install an apk on the VM, using the vm-adb install command :
+```
+./bin/vm-adb kpbmvzpw install /tmp/file.apk
+```
 
 ## Interact with the VM sensors
 
