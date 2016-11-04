@@ -266,7 +266,7 @@ eth1
 ```
 
 If you need to transfer files with push/pull/install, the adb process will not have access to the host
-filesystem, so it might be better to intstall the package android-tools-adb with apt.
+filesystem, so it might be better to install the package android-tools-adb with apt.
 The IP address of each VM is in ./libs/vms/{vm_id}/ip
 
 ```
