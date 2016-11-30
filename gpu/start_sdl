@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -eu
+
+sleep 6
+mkdir -p ./log
+
+# If a version of android is specified, recreate the symlinks
+# to the right version of the libraries
+
+if test "$AIC_PLAYER_ANDROID_VERSION"; then
+    echo "Create shared library links"
+    for sharedlib in ./lib/android-v$(echo "$AIC_PLAYER_ANDROID_VERSION" | cut -d '.' -f1)/*; do
+        ln -sf "$(realpath "$sharedlib")" "./lib/$(basename "$sharedlib")"
+    done
+fi
+
+echo "Starting ./player_sdl_grab"
+while true
+do
+    vglrun -c 0 -d :1 ./player_sdl_grab
+    sleep 1
+done
