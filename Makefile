@@ -3,17 +3,10 @@ clean:
 	rm -f lib/images/services.tar lib/images/player.tar
 
 #
-# Install repo
-#
-
-bin/repo:
-	curl https://storage.googleapis.com/git-repo-downloads/repo -o bin/repo
-	chmod 755 bin/repo
-
-#
 # Load prebuilt player + service images
 #
 
+.PHONY: docker-load
 docker-load:
 	docker load -i lib/images/services.tar
 	docker load -i lib/images/player.tar
@@ -52,6 +45,7 @@ src/senza/ats.senza: | src/senza
 # Build player set
 #
 
+.PHONY: player-build
 player-build: src/player src/player.compose src/player.camera
 	cd src/player; make docker-all
 	cd src/player.camera; make docker-all
@@ -66,6 +60,7 @@ TAG ?= latest
 src/senza/Dockerfile:
 	ln -s ats.senza/Dockerfile src/senza/Dockerfile
 
+.PHONY: services-build
 services-build: src/senza/ats.util src/senza/ats.client src/senza/ats.senza src/senza/Dockerfile
 	docker build -f src/senza/Dockerfile src/senza -t aic.senza:${TAG}
 	TAG=$(TAG) docker-compose -f lib/docker/services/services.yml build
@@ -73,46 +68,8 @@ services-build: src/senza/ats.util src/senza/ats.client src/senza/ats.senza src/
 lib/images:
 	mkdir lib/images
 
+.PHONY: docker-save
 docker-save: services-build player-build | lib/images
 	docker save -o lib/images/services.tar aic.senza
 	docker save -o lib/images/player.tar aic.ffserver aic.xorg aic.prjdata aic.avmdata aic.sdl aic.camera aic.audio aic.sensors aic.adb
 
-
-#
-# Build VM
-#
-
-src/rom: | src
-	mkdir src/rom
-
-rom-init-kitkat: | src/rom bin/repo
-	cd src/rom; $(shell pwd)/bin/repo init -u git@github.com:AiC-Project/manifest.git -b aic-kitkat
-
-#rom-init-lollipop: | src/rom bin/repo
-#	cd src/rom; $(shell pwd)/bin/repo init -u git@git.rnd.alterway.fr:aic_vm/manifest.git -b aic-lollipop
-
-rom-sync: | src/rom bin/repo
-	cd src/rom; $(shell pwd)/bin/repo sync
-
-rom-sync-force: | src/rom bin/repo
-	cd src/rom; $(shell pwd)/bin/repo sync --force-sync
-
-#rom-discard: src/rom
-#	cd src/rom; repo forall -vc "git reset --hard"
-
-# Build everything within a docker container, by sharing the source volume.
-# Build dependencies are not required on the host, except for the make command and Docker.
-
-aospwrap = docker run --rm -ti -v ${CURDIR}/lib/docker/buildaosp:/home/developer/build -v ${CURDIR}/src/rom:/home/developer/rom -v ${CURDIR}/src/.ccache:/home/developer/.ccache -ti aic.aospbuilder
-
-docker-build-rom-builder:
-	docker build --build-arg USER_ID=$(shell id -u) --build-arg GROUP_ID=$(shell id -g) -t aic.aospbuilder lib/docker/buildaosp
-
-src/.ccache:
-	mkdir src/.ccache
-
-rom-build: docker-build-rom-builder | src src/.ccache
-	$(aospwrap) bash build/build gobyp
-	bash ./lib/docker/buildaosp/move_built_img gobyp
-	$(aospwrap) bash build/build gobyt
-	bash ./lib/docker/buildaosp/move_built_img gobyt

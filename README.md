@@ -72,11 +72,6 @@ The following components will be deployed:
 
 If you haven't yet, choose the location of $AIC_HOME.
 
-If you want to build the Android images too, keep in mind that AOSP has a huge
-build tree, count at least 90GB of disk space and several hours (of download -
-and after that, some more to actually compile). The sources are kept under
-$AIC_HOME as well.
-
 ```
 $ export AIC_HOME=/path/to/local-aic
 $ git clone git@github.com:AiC-Project/local-aic.git $AIC_HOME
@@ -134,36 +129,10 @@ $ curl -L https://github.com/AiC-Project/local-aic/releases/download/0.7.3/andro
 
 ### From sources
 
-Initialize the meta-repository:
-
-```
-$ make rom-init-kitkat
-```
-
-and run the actual build. This is going to take some time. You can replace 'kitkat' with 'lollipop' to build Android v5.
-
-```
-$ make rom-sync
-[...]
-Fetching project platform/packages/apps/CertInstaller
-Fetching projects:   0% (2/378)  Fetching project platform/external/chromium_org/third_party/libphonenumber/src/resources
-Fetching project platform/developers/samples/android
-[...]
-Fetching project platform/hardware/qcom/camera
-Fetching project platform/frameworks/webview
-Fetching projects: 100% (378/378), done.
-Syncing work tree: 100% (378/378), done.
-$ make rom-build
-[...]
-Creating dynamic image with size 1106430976 bytes (1056MB)...
-Done with VirtualBox bootable system-disk image -[ out/target/product/gobyt/android_system_disk.vdi ]-
-bash ./lib/docker/buildaosp/move_built_img gobyt
-$
-```
+See https://github.com/AiC-Project/ats.rombuild.git
 
 
 # Running AiC
-
 
 
 ## Backend services
