@@ -61,7 +61,7 @@ The following components will be deployed:
    device emulation and a NoVNC UI
 
 
-![](lib/docs/Overview.png)
+![](docs/images/Overview.png)
 
 
 ## Installing $AIC_HOME
@@ -352,5 +352,5 @@ a too big resolution can have performance issues.
 
 # Communication flow
 
-![](lib/docs/Communication.png)
+![](docs/images/Communication.png)
 
