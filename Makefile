@@ -23,22 +23,22 @@ src/senza: | src
 	mkdir src/senza
 
 src/player: | src
-	cd src; git clone git@github.com:AiC-Project/player.git
+	cd src; git clone git@github.com:AiC-Project/player.git -b v0.8
 
 src/player.compose: | src
-	cd src; git clone git@github.com:AiC-Project/player.compose.git
+	cd src; git clone git@github.com:AiC-Project/player.compose.git -b v0.8
 
 src/player.camera: | src
-	cd src; git clone git@github.com:AiC-Project/player.camera.git
+	cd src; git clone git@github.com:AiC-Project/player.camera.git -b v0.8
 
 src/senza/ats.util: | src/senza
-	cd src/senza; git clone git@github.com:AiC-Project/ats.util.git
+	cd src/senza; git clone git@github.com:AiC-Project/ats.util.git -b v0.8
 
 src/senza/ats.client: | src/senza
-	cd src/senza; git clone git@github.com:AiC-Project/ats.client.git
+	cd src/senza; git clone git@github.com:AiC-Project/ats.client.git -b v0.8
 
 src/senza/ats.senza: | src/senza
-	cd src/senza; git clone git@github.com:AiC-Project/ats.senza.git
+	cd src/senza; git clone git@github.com:AiC-Project/ats.senza.git -b v0.8
 
 
 #
