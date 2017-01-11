@@ -120,7 +120,7 @@ $
 ### From binaries
 
 ```
-$ curl -L https://github.com/AiC-Project/local-aic/releases/download/0.7.3/android-images.tar | tar xf - -C lib/images/
+$ curl -L https://github.com/AiC-Project/local-aic/releases/download/0.8/android-images.tar | tar xf - -C lib/images/
 ```
 
 ### From sources
@@ -166,10 +166,10 @@ $ ./bin/vm-create path/to/image
 
 For the image path, substitute the folder containing the version of your choice:
 
-| Version         | Image Path                        |
-| --------------- | --------------------------------- |
-| Kitkat Phone    | ./lib/images/android/4.4.4/gobyp  |
-| Kitkat Tablet   | ./lib/images/android/4.4.4/gobyt  |
+| Version         | Image Path                             |
+| --------------- | -------------------------------------- |
+| Kitkat Phone    | ./lib/images/android/aic-kitkat/gobyp  |
+| Kitkat Tablet   | ./lib/images/android/aic-kitkat/gobyt  |
 
 
 The new VM will be assigned a random ID. You can list the VMs with the command
