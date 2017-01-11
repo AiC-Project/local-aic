@@ -8,14 +8,10 @@ This repository contains the tools to build and run AiC in a "single host, singl
 
 A modern linux distribution is required. It should be able to run Docker 1.10+, and qemu-kvm through libvirt.
 
-Very few dependencies are installed in the host system, even for building from
-the sources: most of the required libraries and tools are installed in docker
-images and run over a folder shared with the host.
-The containers themselves are built upon Ubuntu 16.04, and we assume the host
-is running Ubuntu 16.04 too, but it should be easy to install on another
-distribution.
+The Docker images are built upon Ubuntu 16.04, and we assume the host is running Ubuntu 16.04 too, but it
+should be easy to install on another distribution.
 
-## The tools
+### Tools
 
 Add the docker repository
 
@@ -26,7 +22,7 @@ $ echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" | sudo tee /e
 
 Unfortunately the apt package "docker-compose" is not compatible with
 docker-engine, because it depends instead on the docker.io package.
-It is therefore installed as a python package instead. (if you prefer, you can
+It is therefore installed as a Python package instead. (if you prefer, you can
 install it in a virtualenv)
 
 ```
@@ -35,7 +31,7 @@ $ sudo apt install -y git make python-pip docker-engine libvirt-bin qemu-kvm
 $ sudo pip install docker-compose
 ```
 
-The commands in the next section assume that the current user can run docker and libvirt.
+The commands in the next section assume that the current user can run Docker and libvirt.
 
 A simple way to allow that is to add the user to the docker and libvirtd groups:
 
@@ -49,7 +45,7 @@ $ sudo adduser $(whoami) libvirtd
 These groups might pose a security risk if you share the host with other
 projects. Adding an untrusted user to the docker group is equivalent to granting
 him root permissions, so you might prefer to manually prepend "sudo" to the
-make commands and $AIC_HOME/bin/* scripts.
+`make` commands and `$AIC_HOME/bin/*` scripts.
 
 
 ## Installation overview
@@ -59,7 +55,7 @@ The following components will be deployed:
 
  - A main directory ($AIC_HOME) to contain scripts, the Android VMs and system images
  - Three Docker containers, shared among all VMs, to provide communication bus and API
- - An arbitrary number of Android x86 VMs, limited by the host's CPU and RAM
+ - An arbitrary number of Android x86 VMs, limited by the host's CPU and RAM.
    You can change the default settings in lib/vm_template.xml
  - A set of Docker containers for /each/ VM, to provide rendering and encoding,
    device emulation and a NoVNC UI
@@ -85,8 +81,8 @@ $ cd $AIC_HOME
 
 ```
 $ mkdir -p lib/images
-$ curl -Lo lib/images/services.tar https://github.com/AiC-Project/local-aic/releases/download/0.7.3/services.tar
-$ curl -Lo lib/images/player.tar https://github.com/AiC-Project/local-aic/releases/download/0.7.3/player.tar
+$ curl -Lo lib/images/services.tar https://github.com/AiC-Project/local-aic/releases/download/0.8/services.tar
+$ curl -Lo lib/images/player.tar https://github.com/AiC-Project/local-aic/releases/download/0.8/player.tar
 $ make docker-load
 docker load -i lib/images/services.tar
 Loaded image: aic.senza:latest
@@ -129,7 +125,7 @@ $ curl -L https://github.com/AiC-Project/local-aic/releases/download/0.7.3/andro
 
 ### From sources
 
-See https://github.com/AiC-Project/ats.rombuild.git
+See https://github.com/AiC-Project/ats.rombuild
 
 
 # Running AiC
