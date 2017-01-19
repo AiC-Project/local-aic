@@ -1,0 +1,6 @@
+theme: readthedocs
+docs_dir: ./docs
+site_name: AiC Local
+pages:
+  - AiC Local: index.md
+  - GPU: gpu/README.gpu.md

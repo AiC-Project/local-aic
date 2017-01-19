@@ -1,0 +1,12 @@
+language: python
+
+install: pip install mkdocs
+
+script: sed 's/docs\///g' README.md > docs/index.md && mkdocs build && bash script/publish.sh
+
+notifications:
+  email: false
+
+branches:
+  only:
+  - master
