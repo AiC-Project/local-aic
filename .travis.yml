@@ -2,7 +2,7 @@ language: python
 
 install: pip install mkdocs
 
-script: sed 's/docs\///g' README.md > docs/index.md && mkdocs build && bash bin/publish-docs.sh
+script: sed 's/docs\///g' README.md > docs/index.md && mkdocs build && bash .travis/publish-docs.sh
 
 notifications:
   email: false
