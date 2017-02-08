@@ -4,3 +4,4 @@ site_name: AiC Local
 pages:
   - AiC Local: index.md
   - GPU: gpu/README.gpu.md
+extra_javascript: ['custom.js']
